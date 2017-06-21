@@ -1,0 +1,1 @@
+@py.exe "C:\Users\Shreyansh Singh\Desktop\WebScrapers\topGoogleResults.py" %*
