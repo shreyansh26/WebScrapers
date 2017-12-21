@@ -1,4 +1,6 @@
 const puppeteer = require('puppeteer')
+const csv = require('csv')
+const csvdata = require('csvdata')
 
 async function run() {
   const browser = await puppeteer.launch({
@@ -20,29 +22,29 @@ async function run() {
 
   await page.waitForNavigation();
   await page.screenshot({ path: 'screenshots/sachin.png'});
-  //const SEARCH_RESULTS_SELECTOR = '#rso > div:nth-child(3) > div > div:nth-child(INDEX) > div > div > h3 > a';
   const SEARCH_RESULTS_SELECTOR = 'h3.r > a';
   const LIST_CLASS = 'r';
 
-  let listLength = await page.evaluate((sel) => {
-    return document.getElementsByClassName(sel).length;
-  }, LIST_CLASS);
 
-  console.log(listLength);
-
-  let search_result = await page.evaluate((sel) => {
+  let search_result_links = await page.evaluate((sel) => {
     let result =  document.querySelectorAll(sel);
-    return result;
+    let final_result = [...result];
+    links = final_result.map(link => link.href);
+    titles = final_result.map(link => link.innerText)
+    return [titles, links];
   }, SEARCH_RESULTS_SELECTOR)
   .catch(error => console.log('Error1!'));
-  if(!search_result)
+
+  if(!search_result_links)
     console.log('Error2!')
 
-  let len = Object.keys(search_result).length;
-  for (let i=0; i<len; i++) {
-    //console.log(search_result[i].href);
-    console.log(search_result[i].getAttribute('href'));
+  search_results = []
+  for (let i=0; i<search_result_links[0].length; i++) {
+    console.log(search_result_links[0][i] + ' -> ' + search_result_links[1][i]);
+    search_results.push([i, search_result_links[0][i], search_result_links[1][i]]);
   }
+  csvdata.write('./links.csv', search_results, {header: 'id,title,link'})
+  browser.close()
 }
 
 run();

@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/shreyansh26/WebScrapers#readme",
   "dependencies": {
+    "csv": "^0.3.7",
+    "csvdata": "^1.4.0",
     "puppeteer": "0.13.0"
   }
 }
